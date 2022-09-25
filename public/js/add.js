@@ -2,6 +2,7 @@ const storeForm = document.getElementById('store-form');
 const title = document.getElementById('title');
 const lng = document.getElementById('lng');
 const lat = document.getElementById('lat');
+const body = document.getElementById('body')
 
 // Send POST to API to add store
 async function addStore(e) {
@@ -13,6 +14,7 @@ async function addStore(e) {
 
   const sendBody = {
     title: title.value,
+    body: body.value,
     location: {
       coordinates: [
         lng.value,
@@ -20,6 +22,7 @@ async function addStore(e) {
       ]
     }
   };
+  alert(body.value)
 
   try {
     const res = await fetch('/api/v1/stores', {
@@ -32,7 +35,9 @@ async function addStore(e) {
 
     if (res.status === 400) {
       throw Error('Store already exists!');
-    }
+    }//else if (title.length === 15){
+    //   alert('Title must be less than 15 characters')
+    // }
       
     
     alert('Store added!');

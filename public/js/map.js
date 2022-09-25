@@ -1,35 +1,5 @@
 mapboxgl.accessToken = 'pk.eyJ1IjoiaXNhYWNoaGIiLCJhIjoiY2w4YzVseG9lMDYwdDN4bG00dGxyaGh0ciJ9.ox9mxvIZWiAzAzGtn2EEtQ';
 
-const geojson = {
-  'type': 'FeatureCollection',
-  'features': [
-    {
-      'type': 'Feature',
-      'geometry': {
-        'type': 'Point',
-        'coordinates': [-77.032, 38.913]
-      },
-      'properties': {
-        'title': 'This is a story',
-        'description': 'All about how my life got flipped turned upside down',
-        'icon': 'shop'
-      }
-    },
-    {
-      'type': 'Feature',
-      'geometry': {
-        'type': 'Point',
-        'coordinates': [-122.414, 37.776]
-      },
-      'properties': {
-        'title': 'I\'d like to take a minute',
-        'description': 'just sit right there, Ill tell you about how i became a fresh prince of a town called belair.',
-        'icon': 'shop'
-      }
-    }
-  ]
-};
-
 const map = new mapboxgl.Map({
   container: 'map',
   style: 'mapbox://styles/mapbox/satellite-streets-v11',
@@ -38,23 +8,7 @@ const map = new mapboxgl.Map({
   projection: 'globe'
 });
 
-//add markers to map
-for (const feature of geojson.features) {
-  // create a HTML element for each feature
-  const el = document.createElement('div');
-  el.className = 'marker';
 
-  // make a marker for each feature and add it to the map
-  new mapboxgl.Marker(el)
-    .setLngLat(feature.geometry.coordinates)
-    .setPopup(
-      new mapboxgl.Popup({ offset: 25 }) // add popups
-        .setHTML(
-          `<h3>${feature.properties.title}</h3><p>${feature.properties.description}</p>`
-        )
-    )
-    .addTo(map);
-}
 
 map.on('load', () => {
   // Set the default atmosphere style
@@ -78,12 +32,30 @@ async function getStores() {
       },
       properties: {
         title: store.title,
-        icon: 'shop'
+        body: store.body
       }
     };
   });
   loadMap(stores);
+    //add markers to map
+    for (const feature of stores) {
+      // create a HTML element for each feature
+      const el = document.createElement('div');
+      el.className = 'marker';
+    
+      // make a marker for each feature and add it to the map
+      new mapboxgl.Marker(el)
+        .setLngLat(feature.geometry.coordinates)
+        .setPopup(
+          new mapboxgl.Popup({ offset: 25 }) // add popups
+            .setHTML(
+              `<h3>${feature.properties.title}</h3><p>${feature.properties.body}</p>`
+            )
+        )
+        .addTo(map);
+    }
 }
+
 
 // Load map with stores
 function loadMap(stores) {
@@ -98,17 +70,18 @@ function loadMap(stores) {
           features: stores
         }
       },
-      layout: {
-        'icon-image': '{icon}-15',
-        'icon-size': 1.5,
-        'text-field': '{title}',
-        'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
-        'text-offset': [0, 0.9],
-        'text-anchor': 'top'
-      }
+      // layout: {
+      //   'icon-image': '{icon}-15',
+      //   'icon-size': 1.5,
+      //   'text-field': '{title}',
+      //   'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
+      //   'text-offset': [0, 0.9],
+      //   'text-anchor': 'top'
+      // }
     });
   });
 }
+
 
 map.on('click', async (e) => {
   let lng = e.lngLat.lng
